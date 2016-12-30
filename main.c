@@ -42,11 +42,13 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 	if (!pwm_flag) {
 		pwm_flag = 1;
 		P1 = 0x01;
-		TH0 = pwm_width;
+		P2 = 0x05; //0,1 = right // 2,3 = lefts
+		TH1 = pwm_width;
 	} else {
 		pwm_flag = 0;
 		P1 = 0x00;
-		TH0 = 255 - pwm_width;
+		P2 = 0x00;
+		TH1 = 255 - pwm_width;
 	}
-	TF0 = 0;	// clear overflow flag
+	TF1 = 0;	// clear overflow flag
 }
