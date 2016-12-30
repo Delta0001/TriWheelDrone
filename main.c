@@ -1,0 +1,32 @@
+#include <reg51.h>
+
+sbit mybit=P1^0;
+
+void delay();
+
+void main(void) {
+	TMOD = 0x01; // Timer 0 Gate:0 C/T:0 Mode:01 (16-bit timer)
+	
+	P1 = 0x01;
+	while (1) {
+		delay();
+		delay();
+		delay();
+		delay();
+		P1 = P1<<1;
+		if (P1==0x00) P1 = 0x01;
+	}
+}
+
+void delay(void) { // 25ms delay 
+				// (12 crystal cycle = 1 machine cycle)
+				// (12/11.0599MHz)(2^16 - x)=25ms
+				// x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
+	TL0=0x00;	// load counting value
+	TH0=0xA6;	// load counting value 
+	TR0=1;		// turn on timer 0
+	while (TF0==0); // wait for overflow flag
+	TR0=0;		// turn off timer 0 on overflow
+	TF0=0;		// clear overflow flag (won't be reset by hardware)
+	
+}
