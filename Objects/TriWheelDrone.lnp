@@ -1,4 +1,3 @@
-".\Objects\START4XX.obj",
 ".\Objects\main.obj" 
 TO ".\Objects\TriWheelDrone" 
 PRINT(".\Listings\TriWheelDrone.m51") RAMSIZE(256) 

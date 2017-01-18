@@ -3,7 +3,7 @@
 void delay();
 void init();
 
-#define pwm_width P3;
+#define pwm_width P0;
 bit pwm_flag = 0;
 
 void main() {
@@ -24,9 +24,9 @@ void init() {
 	EA = 1; 		// Enable Interrupts
 	ET1 = 1;		// Enable interrupt timer1 
 	TR1 = 1; 		// Turn on timer0
-	P1 = 0x01;
+	P2 = 0x01;		// LED 
 }
-void delay() { // 25ms delay 
+void delay() {  // 25ms delay 
 				// (12 crystal cycle = 1 machine cycle)
 				// (12/11.0599MHz)(2^16 - x)=25ms
 				// x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
@@ -41,13 +41,13 @@ void delay() { // 25ms delay
 void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/Pulse_Width_Modulation
 	if (!pwm_flag) {
 		pwm_flag = 1;
-		P1 = 0x01;
-		P2 = 0x05; //0,1 = right // 2,3 = lefts
+		P2 = 0x01;
+		P1 = 0x05; 				// turn on Motors	ports 0,1 = right; ports 2,3 = left // 0A = forward 05 = backward
 		TH1 = pwm_width;
 	} else {
 		pwm_flag = 0;
-		P1 = 0x00;
 		P2 = 0x00;
+		P1 = 0x00;				// turn off motors
 		TH1 = 255 - pwm_width;
 	}
 	TF1 = 0;	// clear overflow flag
