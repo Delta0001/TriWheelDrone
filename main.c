@@ -5,6 +5,7 @@ void init();
 
 #define pwm_width P0;
 bit pwm_flag = 0;
+unsigned char left_motor_mode, right_motor_mode; // controls the direction of each motor's state (forward, nautral, or reverse). The two values will be ORed and given to motor driver.
 
 void main() {
 	init();
@@ -43,7 +44,7 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 	if (!pwm_flag) {
 		pwm_flag = 1;
 		P2 = 0x01;				// LED ON
-		P1 = 0x05; 				// MOTORS ON	ports 0,1 = right; ports 2,3 = left // 0A = forward 05 = backward
+		P1 = left_motor_mode | right_motor_mode; // MOTORS ON	ports 0,1 = right; ports 2,3 = left // 0A = forward 05 = backward
 		TH1 = pwm_width;
 	} else {
 		pwm_flag = 0;
@@ -55,5 +56,43 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 }
 
 void serial() interrupt 4 {
+	/*
+	if (c=='0') {
+		left_motor_mode = 0x00;
+		right_motor_mode = 0x00;
+	}
+	elseif (c=='5') {
+		left_motor_mode = 0x01;
+		right_motor_mode = 0x04;
+	}
+	else if (c=='A') {
+		left_motor_mode = 0x02;
+		right_motor_mode = 0x08;
+	}
+	else if (c=='9') {
+		left_motor_mode = 0x01;
+		right_motor_mode = 0x08;
+	}
+	else if (c=='6') {
+		left_motor_mode = 0x02;
+		right_motor_mode = 0x01;
+	}
+	else if (c=='4') {
+		left_motor_mode = 0x00;
+		right_motor_mode = 0x04;
+	}
+	else if (c=='8') {
+		left_motor_mode = 0x00;
+		right_motor_mode = 0x08;
+	}
+	else if (c=='1') {
+		left_motor_mode = 0x01;
+		right_motor_mode = 0x00;
+	}
+	else if (c=='2') {
+		left_motor_mode = 0x02;
+		right_motor_mode = 0x00;
+	}
 	
+	*/
 }
