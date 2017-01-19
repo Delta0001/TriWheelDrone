@@ -20,10 +20,11 @@ void main() {
 }
 
 void init() {
-	TMOD = 0x11;	// Timer1 Gate:0 C/T:0 Mode:00 (13-bit timer) // Timer0 Gate:0 C/T:0 Mode:01 (16-bit timer)
-	EA = 1; 		// Enable Interrupts
-	ET1 = 1;		// Enable interrupt timer1 
-	TR1 = 1; 		// Turn on timer0
+	TMOD = 0x01;	// Timer1 Gate:0 C/T:0 Mode:00 (13-bit timer) // Timer0 Gate:0 C/T:0 Mode:01 (16-bit timer)
+	EA = 1; 		// Global Interrupt Enable
+	ES = 1;			// Enable Serial Interrupt
+	ET1 = 1;		// Enable Timer 1 Interrupt
+	TR1 = 1; 		// Turn on timer0 used in delay()
 	P2 = 0x01;		// LED ON
 }
 void delay() {  // 25ms delay 
@@ -51,4 +52,8 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 		TH1 = 255 - pwm_width;
 	}
 	TF1 = 0;	// clear overflow flag (won't be reset by hardware)
+}
+
+void serial() interrupt 4 {
+	
 }
