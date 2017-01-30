@@ -12,21 +12,17 @@ void main() {
 	
 	while (1) {
 		delay();
-		//delay();
-		//delay();
-		//delay();
-		//P1 = P1<<1;
-		//if (P1==0x00) P1 = 0x01;
 	}
 }
 
 void init() {
 	TMOD = 0x01;	// Timer1 Gate:0 C/T:0 Mode:00 (13-bit timer) // Timer0 Gate:0 C/T:0 Mode:01 (16-bit timer)
-	EA = 1; 		// Global Interrupt Enable
-	ES = 1;			// Enable Serial Interrupt
-	ET1 = 1;		// Enable Timer 1 Interrupt
-	TR1 = 1; 		// Turn on timer0 used in delay()
-	P2 = 0x01;		// LED ON
+	TR1  = 1; 		// Turn on Timer 1
+	SCON = 0x09;	// Serial Mode 2 (9-bit UART) Baud Rate: OSC/64
+	IE   = 0x98; 	// Enable Global, Serial, Timer 1 Interrupt
+	P2   = 0x01;	// LED ON
+	left_motor_mode = 0x00;		// Default Motor Neutral
+	right_motor_mode = 0x00;
 }
 void delay() {  // 25ms delay 
 				// (12 crystal cycle = 1 machine cycle)
@@ -45,7 +41,6 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 		pwm_flag = 1;
 		P2 = 0x01;				// LED ON
 		P1 = left_motor_mode | right_motor_mode; // MOTORS ON	ports 0,1 = right; ports 2,3 = left // 0A = forward 05 = backward
-		TH1 = pwm_width;
 	} else {
 		pwm_flag = 0;
 		P2 = 0x00;				// LED OFF
@@ -56,43 +51,44 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 }
 
 void serial() interrupt 4 {
-	/*
-	if (c=='0') {
-		left_motor_mode = 0x00;
-		right_motor_mode = 0x00;
-	}
-	elseif (c=='5') {
+	char c;
+	IE = 0x00; 	// Temporarily disable other interrupts
+	while (RI==0);
+	c = SBUF;
+//	if (c=='0') { 					// Neutral
+//		left_motor_mode = 0x00;
+//		right_motor_mode = 0x00;
+//	}
+	if (c=='5') { 					// Forward
 		left_motor_mode = 0x01;
 		right_motor_mode = 0x04;
 	}
-	else if (c=='A') {
+	else if (c=='A') {				// Reverse
 		left_motor_mode = 0x02;
 		right_motor_mode = 0x08;
 	}
-	else if (c=='9') {
+	else if (c=='9') {				// Tank Left
 		left_motor_mode = 0x01;
 		right_motor_mode = 0x08;
 	}
-	else if (c=='6') {
+	else if (c=='6') {				// Tank Right
 		left_motor_mode = 0x02;
 		right_motor_mode = 0x01;
 	}
-	else if (c=='4') {
-		left_motor_mode = 0x00;
-		right_motor_mode = 0x04;
-	}
-	else if (c=='8') {
-		left_motor_mode = 0x00;
-		right_motor_mode = 0x08;
-	}
-	else if (c=='1') {
-		left_motor_mode = 0x01;
-		right_motor_mode = 0x00;
-	}
-	else if (c=='2') {
-		left_motor_mode = 0x02;
-		right_motor_mode = 0x00;
-	}
-	
-	*/
+//	else if (c=='4') {				// Right Forward
+//		left_motor_mode = 0x00;
+//		right_motor_mode = 0x04;
+//	}
+//	else if (c=='8') {				// Right Backward
+//		left_motor_mode = 0x00;
+//		right_motor_mode = 0x08;
+//	}
+//	else if (c=='1') {				// Left Forward
+//		left_motor_mode = 0x01;	
+//		right_motor_mode = 0x00;
+//	}
+//	else if (c=='2') {				// Left Reverse
+//		left_motor_mode = 0x02;
+//		right_motor_mode = 0x00;
+	IE=0x98;	// change Interrupts back to normal
 }
