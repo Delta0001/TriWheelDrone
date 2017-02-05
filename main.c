@@ -11,7 +11,7 @@ void main() {
 	init();
 	
 	while (1) {
-		delay();
+		//delay();
 	}
 }
 
@@ -24,17 +24,17 @@ void init() {
 	left_motor_mode = 0x00;		// Default Motor Neutral
 	right_motor_mode = 0x00;
 }
-void delay() {  // 25ms delay 
-				// (12 crystal cycle = 1 machine cycle)
-				// (12/11.0599MHz)(2^16 - x)=25ms
-				// x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
-	TL0=0x00;	// load counting value
-	TH0=0xA6;	// load counting value 
-	TR0=1;		// turn on timer0
-	while (TF0==0); // wait for overflow flag
-	TR0=0;		// turn off timer0 on overflow
-	TF0=0;		// clear overflow flag (won't be reset by hardware)
-}
+//void delay() {  // 25ms delay 
+//				// (12 crystal cycle = 1 machine cycle)
+//				// (12/11.0599MHz)(2^16 - x)=25ms
+//				// x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
+//	TL0=0x00;	// load counting value
+//	TH0=0xA6;	// load counting value 
+//	TR0=1;		// turn on timer0
+//	while (TF0==0); // wait for overflow flag
+//	TR0=0;		// turn off timer0 on overflow
+//	TF0=0;		// clear overflow flag (won't be reset by hardware)
+//}
 
 void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/Pulse_Width_Modulation
 	if (!pwm_flag) {
