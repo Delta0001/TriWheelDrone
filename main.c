@@ -17,12 +17,14 @@ void main() {
 
 void init() {
 	TMOD = 0x20;	// Timer1 Gate:0 C/T:0 Mode:10 (8-bit auto-reload) // Timer0 Gate:0 C/T:0 Mode:00 (13-bit timer)
-	TR0  = 1;		// Turn on Timer 0 used for PWM
+	TH1  = 0xFD;	// TH1 = 256 - ((11059000 / 192) / 19200Baud) = 232 = 0xFD
 	TR1  = 1; 		// Turn on Timer 1 used for Baud Rate
+	TR0  = 1;		// Turn on Timer 0 used for PWM
 	
 	SCON = 0x50;	// Serial Mode 1 (8-bit UART) and Receiver Enabled
-	IE   = 0x9A; 	// Enable Global, Serial, Timer 1, Timer 0 Interrupt
+	IE   = 0x98; 	// Enable Global, Serial, Timer 0 Interrupt
 	P2   = 0x01;	// LED ON
+	
 	left_motor_mode = 0x00;		// Default Motor Neutral
 	right_motor_mode = 0x00;
 }
@@ -52,7 +54,7 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 	TF0 = 0;	// clear overflow flag (won't be reset by hardware)
 }
 
-void serial() interrupt 4 {
+void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
 	char c;
 	IE = 0x00; 	// Temporarily disable other interrupts
 	while (RI==0);
