@@ -16,10 +16,12 @@ void main() {
 }
 
 void init() {
-	TMOD = 0x01;	// Timer1 Gate:0 C/T:0 Mode:00 (13-bit timer) // Timer0 Gate:0 C/T:0 Mode:01 (16-bit timer)
-	TR1  = 1; 		// Turn on Timer 1
-	SCON = 0x09;	// Serial Mode 2 (9-bit UART) Baud Rate: OSC/64
-	IE   = 0x98; 	// Enable Global, Serial, Timer 1 Interrupt
+	TMOD = 0x20;	// Timer1 Gate:0 C/T:0 Mode:10 (8-bit auto-reload) // Timer0 Gate:0 C/T:0 Mode:00 (13-bit timer)
+	TR0  = 1;		// Turn on Timer 0 used for PWM
+	TR1  = 1; 		// Turn on Timer 1 used for Baud Rate
+	
+	SCON = 0x50;	// Serial Mode 1 (8-bit UART) and Receiver Enabled
+	IE   = 0x9A; 	// Enable Global, Serial, Timer 1, Timer 0 Interrupt
 	P2   = 0x01;	// LED ON
 	left_motor_mode = 0x00;		// Default Motor Neutral
 	right_motor_mode = 0x00;
@@ -45,9 +47,9 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 		pwm_flag = 0;
 		P2 = 0x00;				// LED OFF
 		P1 = 0x00;				// MOTORS OFF
-		TH1 = 255 - pwm_width;
+		TH0 = 255 - pwm_width;
 	}
-	TF1 = 0;	// clear overflow flag (won't be reset by hardware)
+	TF0 = 0;	// clear overflow flag (won't be reset by hardware)
 }
 
 void serial() interrupt 4 {
