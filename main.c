@@ -17,7 +17,7 @@ void main() {
 
 void init() {
 	TMOD = 0x20;	// Timer1 Gate:0 C/T:0 Mode:10 (8-bit auto-reload) // Timer0 Gate:0 C/T:0 Mode:00 (13-bit timer)
-	TH1  = 0xFD;	// TH1 = 256 - ((11059000 / 192) / 19200Baud) = 232 = 0xFD
+	TH1  = 0xFD;	// TH1 = 256 - ((11059000 / 384) / 9600) = 232 = 0xFD
 	TR1  = 1; 		// Turn on Timer 1 used for Baud Rate
 	TR0  = 1;		// Turn on Timer 0 used for PWM
 	
@@ -30,7 +30,7 @@ void init() {
 }
 //void delay() {  // 25ms delay 
 //				// (12 crystal cycle = 1 machine cycle)
-//				// (12/11.0599MHz)(2^16 - x)=25ms
+//				// (12/11.0592MHz)(2^16 - x)=25ms
 //				// x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
 //	TL0=0x00;	// load counting value
 //	TH0=0xA6;	// load counting value 
@@ -56,9 +56,14 @@ void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/
 
 void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
 	char c;
-	IE = 0x00; 	// Temporarily disable other interrupts
-	while (RI==0);
+	IE = 0x00; 	// Temporarily disable other interrupts to prevent recursion
 	c = SBUF;
+	
+	// to show character was received
+	SBUF='t';
+	while(!TI);
+	TI=0;
+	
 //	if (c=='0') { 					// Neutral
 //		left_motor_mode = 0x00;
 //		right_motor_mode = 0x00;
@@ -66,6 +71,9 @@ void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
 	if (c=='5') { 					// Forward
 		left_motor_mode = 0x01;
 		right_motor_mode = 0x04;
+		SBUF='A';
+		while(!TI);
+		TI=0;
 	}
 	else if (c=='A') {				// Reverse
 		left_motor_mode = 0x02;
@@ -94,5 +102,6 @@ void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
 //	else if (c=='2') {				// Left Reverse
 //		left_motor_mode = 0x02;
 //		right_motor_mode = 0x00;
+	RI=0;		
 	IE=0x98;	// change Interrupts back to normal
 }
