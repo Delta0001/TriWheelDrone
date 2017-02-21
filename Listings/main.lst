@@ -1,135 +1,125 @@
-C51 COMPILER V9.56.0.0   MAIN                                                              02/08/2017 23:04:53 PAGE 1   
+C51 COMPILER V9.56.0.0   MAIN                                                              02/20/2017 18:56:49 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: D:\Programs\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\List
-                    -ings\main.lst) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
-   1          #include <reg51.h>
-   2          
-   3          void delay();
-   4          void init();
-   5          
-   6          #define pwm_width P0;
-   7          bit pwm_flag = 0;
-   8          unsigned char left_motor_mode, right_motor_mode; // controls the direction of each motor's state (forward,
+   1          
+   2          #include <reg51.h>
+   3          
+   4          void delay();
+   5          void init();
+   6          void sendChar(char c);
+   7          
+   8          #define pwm_width P0;
+   9          bit pwm_flag = 0;
+  10          unsigned char left_motor_mode, right_motor_mode; // controls the direction of each motor's state (forward,
              - nautral, or reverse). The two values will be ORed and given to motor driver.
-   9          
-  10          void main() {
-  11   1              init();
-  12   1              
-  13   1              while (1) {
-  14   2                      //delay();
-  15   2              }
-  16   1      }
-  17          
-  18          void init() {
-  19   1              TMOD = 0x20;    // Timer1 Gate:0 C/T:0 Mode:10 (8-bit auto-reload) // Timer0 Gate:0 C/T:0 Mode:00 (13-bit ti
+  11          
+  12          void main() {
+  13   1        init();
+  14   1        sendChar('s');
+  15   1        sendChar('t');
+  16   1        sendChar('a');
+  17   1        sendChar('r');
+  18   1        sendChar('t');
+  19   1        while (1);
+  20   1      }
+  21          
+  22          void init() {
+  23   1        TMOD = 0x20;  // Timer1 Gate:0 C/T:0 Mode:10 (8-bit auto-reload) // Timer0 Gate:0 C/T:0 Mode:00 (13-bit ti
              -mer)
-  20   1              TH1  = 0xFD;    // TH1 = 256 - ((11059000 / 192) / 19200Baud) = 232 = 0xFD
-  21   1              TR1  = 1;               // Turn on Timer 1 used for Baud Rate
-  22   1              TR0  = 1;               // Turn on Timer 0 used for PWM
-  23   1              
-  24   1              SCON = 0x50;    // Serial Mode 1 (8-bit UART) and Receiver Enabled
-  25   1              IE   = 0x98;    // Enable Global, Serial, Timer 0 Interrupt
-  26   1              P2   = 0x01;    // LED ON
-  27   1              
-  28   1              left_motor_mode = 0x00;         // Default Motor Neutral
-  29   1              right_motor_mode = 0x00;
-  30   1      }
-  31          //void delay() {  // 25ms delay 
-  32          //                              // (12 crystal cycle = 1 machine cycle)
-  33          //                              // (12/11.0599MHz)(2^16 - x)=25ms
-  34          //                              // x = 2^16 - 25ms*11.0592MHz/12 = 42496 = A600H
-  35          //      TL0=0x00;       // load counting value
-  36          //      TH0=0xA6;       // load counting value 
-  37          //      TR0=1;          // turn on timer0
-  38          //      while (TF0==0); // wait for overflow flag
-  39          //      TR0=0;          // turn off timer0 on overflow
-  40          //      TF0=0;          // clear overflow flag (won't be reset by hardware)
-  41          //}
-  42          
-  43          void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/Pulse_Width_Modulation
-  44   1              if (!pwm_flag) {
-  45   2                      pwm_flag = 1;
-  46   2                      P2 = 0x01;                              // LED ON
-  47   2                      P1 = left_motor_mode | right_motor_mode; // MOTORS ON   ports 0,1 = right; ports 2,3 = left // 0A = forwar
+  24   1        TH1  = 0xFD;  // TH1 = 256 - ((11059000 / 384) / 9600) = 232 = 0xFD
+  25   1        TR1  = 1;     // Turn on Timer 1 used for Baud Rate
+  26   1        TR0  = 1;   // Turn on Timer 0 used for PWM
+  27   1        
+  28   1        SCON = 0x50;  // Serial Mode 1 (8-bit UART) and Receiver Enabled
+  29   1        IE   = 0x98;  // Enable Global, Serial, Timer 0 Interrupt
+  30   1        P2   = 0x01;  // LED ON
+  31   1        
+  32   1        left_motor_mode = 0x02;   // Default Motor Neutral
+  33   1        right_motor_mode = 0x01;
+  34   1      }
+  35          
+  36          
+  37          void timer1() interrupt 3 { // implentation of http://www.8051projects.net/wiki/Pulse_Width_Modulation
+  38   1        if (!pwm_flag) {
+  39   2          pwm_flag = 1;
+  40   2          P2 = 0x01;        // LED ON
+  41   2          P1 = left_motor_mode | right_motor_mode; // MOTORS ON ports 0,1 = right; ports 2,3 = left // 0A = forwar
              -d 05 = backward
-  48   2              } else {
-  49   2                      pwm_flag = 0;
-  50   2                      P2 = 0x00;                              // LED OFF
-  51   2                      P1 = 0x00;                              // MOTORS OFF
-C51 COMPILER V9.56.0.0   MAIN                                                              02/08/2017 23:04:53 PAGE 2   
+  42   2        } else {
+  43   2          pwm_flag = 0;
+  44   2          P2 = 0x00;        // LED OFF
+  45   2          P1 = 0x00;        // MOTORS OFF
+  46   2          TH0 = 255 - pwm_width;
+  47   2        }
+  48   1        TF0 = 0;  // clear overflow flag (won't be reset by hardware)
+  49   1      }
+  50          
+  51          void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
+C51 COMPILER V9.56.0.0   MAIN                                                              02/20/2017 18:56:49 PAGE 2   
 
-  52   2                      TH0 = 255 - pwm_width;
-  53   2              }
-  54   1              TF0 = 0;        // clear overflow flag (won't be reset by hardware)
-  55   1      }
-  56          
-  57          void serial() interrupt 4 { // http://www.8052.com/tutser.phtml
-  58   1              char c;
-  59   1              IE = 0x00;      // Temporarily disable other interrupts to prevent recursion
-  60   1              c = SBUF;
-  61   1              
-  62   1              // to show character was received
-  63   1              SBUF='t';
-  64   1              while(!TI);
-  65   1              TI=0;
-  66   1              
-  67   1      //      if (c=='0') {                                   // Neutral
-  68   1      //              left_motor_mode = 0x00;
-  69   1      //              right_motor_mode = 0x00;
-  70   1      //      }
-  71   1              if (c=='5') {                                   // Forward
-  72   2                      left_motor_mode = 0x01;
-  73   2                      right_motor_mode = 0x04;
-  74   2                      SBUF='A';
-  75   2                      while(!TI);
-  76   2                      TI=0;
-  77   2              }
-  78   1              else if (c=='A') {                              // Reverse
-  79   2                      left_motor_mode = 0x02;
-  80   2                      right_motor_mode = 0x08;
-  81   2              }
-  82   1              else if (c=='9') {                              // Tank Left
-  83   2                      left_motor_mode = 0x01;
-  84   2                      right_motor_mode = 0x08;
-  85   2              }
-  86   1              else if (c=='6') {                              // Tank Right
-  87   2                      left_motor_mode = 0x02;
-  88   2                      right_motor_mode = 0x01;
-  89   2              }
-  90   1      //      else if (c=='4') {                              // Right Forward
-  91   1      //              left_motor_mode = 0x00;
-  92   1      //              right_motor_mode = 0x04;
-  93   1      //      }
-  94   1      //      else if (c=='8') {                              // Right Backward
-  95   1      //              left_motor_mode = 0x00;
-  96   1      //              right_motor_mode = 0x08;
-  97   1      //      }
-  98   1      //      else if (c=='1') {                              // Left Forward
-  99   1      //              left_motor_mode = 0x01; 
- 100   1      //              right_motor_mode = 0x00;
- 101   1      //      }
- 102   1      //      else if (c=='2') {                              // Left Reverse
- 103   1      //              left_motor_mode = 0x02;
- 104   1      //              right_motor_mode = 0x00;
- 105   1              RI=0;           
- 106   1              IE=0x98;        // change Interrupts back to normal
- 107   1      }
+  52   1        char c;
+  53   1        ES = 0; //IE = 0x00;  // Temporarily disable serial interrupt // Temporarily disable other interrupts to 
+             -prevent recursion
+  54   1        c = SBUF;
+  55   1        if (c=='5') {           // Forward
+  56   2          P2   = 0x05;
+  57   2          left_motor_mode = 0x01;
+  58   2          right_motor_mode = 0x04;
+  59   2          sendChar('5');
+  60   2        }
+  61   1        else if(c==0x0d) {                               
+  62   2          SBUF='A';                 //Sending back "ACK" as   Acknowledgement 
+  63   2          while(TI==0);
+  64   2          TI=0;
+  65   2          SBUF='C';
+  66   2          while(TI==0);
+  67   2          TI=0;
+  68   2          SBUF='K';
+  69   2          while(TI==0);
+  70   2          TI=0;
+  71   2        }
+  72   1        else if (c=='A') {        // Reverse
+  73   2          P2   = 0x0A;
+  74   2          left_motor_mode = 0x02;
+  75   2          right_motor_mode = 0x08;
+  76   2          sendChar('A');
+  77   2        }
+  78   1        else if (c=='9') {        // Tank Left
+  79   2          P2   = 0x09;
+  80   2          left_motor_mode = 0x01;
+  81   2          right_motor_mode = 0x08;
+  82   2          sendChar('9');
+  83   2        }
+  84   1        else if (c=='6') {        // Tank Right
+  85   2          P2   = 0x06;
+  86   2          left_motor_mode = 0x02;
+  87   2          right_motor_mode = 0x01;
+  88   2          sendChar('6');
+  89   2        }
+  90   1        RI=0;     
+  91   1        ES = 1; //IE=0x98;  // change Interrupts back to normal
+  92   1      }
+  93          
+  94          void sendChar(char c) {
+  95   1        SBUF=c;
+  96   1        while(!TI);
+  97   1        TI=0;
+  98   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    149    ----
+   CODE SIZE        =    275    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-C51 COMPILER V9.56.0.0   MAIN                                                              02/08/2017 23:04:53 PAGE 3   
-
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      2    ----
+   DATA SIZE        =      2       1
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.

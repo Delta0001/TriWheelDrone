@@ -1,9 +1,9 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        02/08/2017  23:04:54  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        02/20/2017  18:56:49  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
-D:\PROGRAMS\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\TriWheelDrone PRINT (.\Listings\TriWheelDrone.m51) 
->> RAMSIZE (256)
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\TriWheelDrone PRINT (.\Listings\TriWheelDrone.m51) RAMSIZE (
+>> 256)
 
 
 MEMORY MODEL: SMALL
@@ -11,8 +11,8 @@ MEMORY MODEL: SMALL
 
 INPUT MODULES INCLUDED:
   .\Objects\main.obj (MAIN)
-  D:\PROGRAMS\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
-  D:\PROGRAMS\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
 
 
 LINK MAP OF MODULE:  .\Objects\TriWheelDrone (MAIN)
@@ -24,7 +24,8 @@ LINK MAP OF MODULE:  .\Objects\TriWheelDrone (MAIN)
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
             DATA    0008H     0002H     UNIT         ?DT?MAIN
-                    000AH     0016H                  *** GAP ***
+            DATA    000AH     0001H     UNIT         _DATA_GROUP_
+                    000BH     0015H                  *** GAP ***
             BIT     0020H.0   0000H.1   UNIT         ?BI?MAIN
                     0020H.1   0000H.7                *** GAP ***
             IDATA   0021H     0001H     UNIT         ?STACK
@@ -36,30 +37,37 @@ LINK MAP OF MODULE:  .\Objects\TriWheelDrone (MAIN)
                     001EH     0005H                  *** GAP ***
             CODE    0023H     0003H     ABSOLUTE     
                     0026H     07DAH                  *** GAP ***
-            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     004DH     UNIT         ?PR?SERIAL?MAIN
-            CODE    08D9H     002AH     UNIT         ?PR?TIMER1?MAIN
-            CODE    0903H     0019H     UNIT         ?PR?INIT?MAIN
-            CODE    091CH     0005H     UNIT         ?PR?MAIN?MAIN
-            CODE    0921H     0003H     UNIT         ?C_INITSEG
+            CODE    0800H     00A9H     UNIT         ?PR?SERIAL?MAIN
+            CODE    08A9H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0935H     002AH     UNIT         ?PR?TIMER1?MAIN
+            CODE    095FH     001EH     UNIT         ?PR?MAIN?MAIN
+            CODE    097DH     001AH     UNIT         ?PR?INIT?MAIN
+            CODE    0997H     0008H     UNIT         ?PR?_SENDCHAR?MAIN
+            CODE    099FH     0003H     UNIT         ?C_INITSEG
 
 
 
 OVERLAY MAP OF MODULE:   .\Objects\TriWheelDrone (MAIN)
 
 
-SEGMENT
-  +--> CALLED SEGMENT
----------------------
-?C_C51STARTUP
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?PR?SERIAL?MAIN                000AH    0001H
+  +--> ?PR?_SENDCHAR?MAIN
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                  -----    -----
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/20/2017  18:56:49  PAGE 2
+
+
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
 
-?PR?MAIN?MAIN
+?PR?MAIN?MAIN                  -----    -----
   +--> ?PR?INIT?MAIN
-
-
-BL51 BANKED LINKER/LOCATER V6.22                                                      02/08/2017  23:04:54  PAGE 2
+  +--> ?PR?_SENDCHAR?MAIN
 
 
 
@@ -73,99 +81,129 @@ SYMBOL TABLE OF MODULE:  .\Objects\TriWheelDrone (MAIN)
   D:0080H         PUBLIC        P0
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
-  C:088CH         PUBLIC        serial
+  C:0800H         PUBLIC        serial
   D:00A8H         PUBLIC        IE
+  B:00A8H.4       PUBLIC        ES
   B:0098H.0       PUBLIC        RI
   B:0098H.1       PUBLIC        TI
-  C:091CH         PUBLIC        main
+  C:095FH         PUBLIC        main
+  C:0997H         PUBLIC        _sendChar
   D:0099H         PUBLIC        SBUF
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
-  C:0903H         PUBLIC        init
+  C:097DH         PUBLIC        init
   D:0008H         PUBLIC        right_motor_mode
   D:0009H         PUBLIC        left_motor_mode
   B:0088H.5       PUBLIC        TF0
   D:008CH         PUBLIC        TH0
   D:008DH         PUBLIC        TH1
   B:0020H.0       PUBLIC        pwm_flag
-  C:08D9H         PUBLIC        timer1
+  C:0935H         PUBLIC        timer1
   B:0088H.4       PUBLIC        TR0
   B:0088H.6       PUBLIC        TR1
   -------         PROC          MAIN
-  C:091CH         LINE#         10
-  C:091CH         LINE#         11
-  C:091FH         LINE#         13
-  C:091FH         LINE#         15
+  C:095FH         LINE#         12
+  C:095FH         LINE#         13
+  C:0962H         LINE#         14
+  C:0967H         LINE#         15
+  C:096CH         LINE#         16
+  C:0971H         LINE#         17
+  C:0976H         LINE#         18
+  C:097BH         LINE#         19
   -------         ENDPROC       MAIN
   -------         PROC          INIT
-  C:0903H         LINE#         18
-  C:0903H         LINE#         19
-  C:0906H         LINE#         20
-  C:0909H         LINE#         21
-  C:090BH         LINE#         22
-  C:090DH         LINE#         24
-  C:0910H         LINE#         25
-  C:0913H         LINE#         26
-  C:0916H         LINE#         28
-  C:0919H         LINE#         29
-  C:091BH         LINE#         30
+  C:097DH         LINE#         22
+  C:097DH         LINE#         23
+  C:0980H         LINE#         24
+  C:0983H         LINE#         25
+  C:0985H         LINE#         26
+  C:0987H         LINE#         28
+  C:098AH         LINE#         29
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/20/2017  18:56:49  PAGE 3
+
+
+  C:098DH         LINE#         30
+  C:0990H         LINE#         32
+  C:0993H         LINE#         33
+  C:0996H         LINE#         34
   -------         ENDPROC       INIT
   -------         PROC          TIMER1
-  C:08D9H         LINE#         43
-  C:08DDH         LINE#         44
-  C:08E0H         LINE#         45
-  C:08E2H         LINE#         46
-  C:08E5H         LINE#         47
-  C:08EBH         LINE#         48
-  C:08EDH         LINE#         49
-  C:08EFH         LINE#         50
-BL51 BANKED LINKER/LOCATER V6.22                                                      02/08/2017  23:04:54  PAGE 3
-
-
-  C:08F2H         LINE#         51
-  C:08F5H         LINE#         52
-  C:08FCH         LINE#         53
-  C:08FCH         LINE#         54
-  C:08FEH         LINE#         55
+  C:0935H         LINE#         37
+  C:0939H         LINE#         38
+  C:093CH         LINE#         39
+  C:093EH         LINE#         40
+  C:0941H         LINE#         41
+  C:0947H         LINE#         42
+  C:0949H         LINE#         43
+  C:094BH         LINE#         44
+  C:094EH         LINE#         45
+  C:0951H         LINE#         46
+  C:0958H         LINE#         47
+  C:0958H         LINE#         48
+  C:095AH         LINE#         49
   -------         ENDPROC       TIMER1
   -------         PROC          SERIAL
   -------         DO            
-  D:0007H         SYMBOL        c
+  D:000AH         SYMBOL        c
   -------         ENDDO         
-  C:088CH         LINE#         57
-  C:0893H         LINE#         59
-  C:0896H         LINE#         60
-  C:0898H         LINE#         63
-  C:089BH         LINE#         64
-  C:089EH         LINE#         65
-  C:08A0H         LINE#         71
-  C:08A3H         LINE#         72
-  C:08A6H         LINE#         73
-  C:08A9H         LINE#         74
-  C:08ACH         LINE#         75
-  C:08AFH         LINE#         76
-  C:08B1H         LINE#         77
-  C:08B3H         LINE#         78
-  C:08B6H         LINE#         79
-  C:08B9H         LINE#         80
-  C:08B9H         LINE#         81
-  C:08BBH         LINE#         82
-  C:08BEH         LINE#         83
-  C:08C1H         LINE#         84
-  C:08C4H         LINE#         85
-  C:08C6H         LINE#         86
-  C:08C9H         LINE#         87
-  C:08CCH         LINE#         88
-  C:08CFH         LINE#         89
-  C:08CFH         LINE#         105
-  C:08D1H         LINE#         106
-  C:08D4H         LINE#         107
+  C:0800H         LINE#         51
+  C:081DH         LINE#         53
+  C:081FH         LINE#         54
+  C:0822H         LINE#         55
+  C:0827H         LINE#         56
+  C:082AH         LINE#         57
+  C:082DH         LINE#         58
+  C:0830H         LINE#         59
+  C:0832H         LINE#         60
+  C:0834H         LINE#         61
+  C:0839H         LINE#         62
+  C:083CH         LINE#         63
+  C:083FH         LINE#         64
+  C:0841H         LINE#         65
+  C:0844H         LINE#         66
+  C:0847H         LINE#         67
+  C:0849H         LINE#         68
+  C:084CH         LINE#         69
+  C:084FH         LINE#         70
+  C:0851H         LINE#         71
+  C:0853H         LINE#         72
+  C:0858H         LINE#         73
+  C:085BH         LINE#         74
+  C:085EH         LINE#         75
+  C:0861H         LINE#         76
+  C:0863H         LINE#         77
+  C:0865H         LINE#         78
+  C:086AH         LINE#         79
+  C:086DH         LINE#         80
+  C:0870H         LINE#         81
+  C:0873H         LINE#         82
+  C:0875H         LINE#         83
+  C:0877H         LINE#         84
+BL51 BANKED LINKER/LOCATER V6.22                                                      02/20/2017  18:56:49  PAGE 4
+
+
+  C:087CH         LINE#         85
+  C:087FH         LINE#         86
+  C:0882H         LINE#         87
+  C:0885H         LINE#         88
+  C:088AH         LINE#         89
+  C:088AH         LINE#         90
+  C:088CH         LINE#         91
+  C:088EH         LINE#         92
   -------         ENDPROC       SERIAL
+  -------         PROC          _SENDCHAR
+  D:0007H         SYMBOL        c
+  C:0997H         LINE#         94
+  C:0997H         LINE#         95
+  C:0999H         LINE#         96
+  C:099CH         LINE#         97
+  C:099EH         LINE#         98
+  -------         ENDPROC       _SENDCHAR
   -------         ENDMOD        MAIN
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 009DH BYTE ( 7%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 011BH BYTE (13%) *
 ******************************************************************************
 
-Program Size: data=11.1 xdata=0 code=301
+Program Size: data=12.1 xdata=0 code=427
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
